@@ -5,7 +5,8 @@
 	import com.jogamp.opengl.math.FloatUtil;
 	import com.jogamp.opengl.util.Animator;
 	import com.jogamp.opengl.util.GLBuffers;
-	import com.jogamp.opengl.util.glsl.ShaderCode;
+import com.jogamp.opengl.util.PMVMatrix;
+import com.jogamp.opengl.util.glsl.ShaderCode;
 	import com.jogamp.opengl.util.glsl.ShaderProgram;
 
 	import java.nio.ByteBuffer;
@@ -60,8 +61,6 @@ public class OpenGLTest {
 	    public void main(String[] args) {
 	        new HelloTriangleSimple().setup();
 	    }
-
-	    //Old vertices and colors, describes a cube
 //		private float vertices[] = {
 //				   -0.5f, -0.5f, -0.5f, 1.0f, -0.5f,  0.5f,  0.5f, 1.0f, -0.5f, -0.5f,  0.5f, 1.0f,
 //				   -0.5f, -0.5f, -0.5f, 1.0f, -0.5f,  0.5f,  0.5f, 1.0f, -0.5f,  0.5f, -0.5f, 1.0f,
@@ -101,7 +100,7 @@ public class OpenGLTest {
 				-0.5f, 0.0f, -0.5f, 1.0f, 0.5f, 0.0f, -0.5f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f   // front side triangle
 		};
 
-	    private final float[] colors = {
+		private final float[] colors = {
 				1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,		// base triangle 1
 				0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,		// base triangle 2
 				1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,		// left side triangle
@@ -115,6 +114,7 @@ public class OpenGLTest {
 	    private IntBuffer vertexArrayName = GLBuffers.newDirectIntBuffer(1);
         private Program program;
 	    private long start;
+	    private PMVMatrix rotation = new PMVMatrix();
 
 	    private void setup() {
 
@@ -152,6 +152,7 @@ public class OpenGLTest {
 
 	        initDebug(gl);
 	        program = new Program(gl, "src/", "passthrough", "passthrough");
+	        rotation.glLoadIdentity();
 	        buildObjects(gl);
 
 	        gl.glEnable(GL_DEPTH_TEST);
@@ -191,16 +192,16 @@ public class OpenGLTest {
 	        gl.glBindVertexArray(vertexArrayName.get(0));
 	        gl.glGenBuffers(Buffer.MAX, bufferName);
 	        gl.glBindBuffer(GL_ARRAY_BUFFER, bufferName.get(0));
-	        gl.glBufferData(GL_ARRAY_BUFFER,  (vertexBuffer.capacity()+colorBuffer.capacity()) * 4L, null, GL_STATIC_DRAW);
-	        gl.glBufferSubData(GL_ARRAY_BUFFER,0L,vertexBuffer.capacity() * 4L, vertexBuffer);
-	        gl.glBufferSubData(GL_ARRAY_BUFFER, vertexBuffer.capacity() * 4L, colorBuffer.capacity()* 4L, colorBuffer);
+	        gl.glBufferData(GL_ARRAY_BUFFER,  (vertexBuffer.capacity()+colorBuffer.capacity()) * 4 , null, GL_STATIC_DRAW);
+	        gl.glBufferSubData(GL_ARRAY_BUFFER,0L,vertexBuffer.capacity() * 4, vertexBuffer);
+	        gl.glBufferSubData(GL_ARRAY_BUFFER, vertexBuffer.capacity() * 4, colorBuffer.capacity()*4, colorBuffer);
 
 	        int vPosition = gl.glGetAttribLocation(program.name, "vPosition");
 	        int vColor = gl.glGetAttribLocation(program.name, "vColor");
 	        gl.glEnableVertexAttribArray(vPosition);
 	        gl.glVertexAttribPointer(vPosition, 4, GL_FLOAT, false, 0, 0);
 	        gl.glEnableVertexAttribArray(vColor);
-	        gl.glVertexAttribPointer(vColor, 4, GL_FLOAT, false, 0, vertexBuffer.capacity() * 4L);
+	        gl.glVertexAttribPointer(vColor, 4, GL_FLOAT, false, 0, vertexBuffer.capacity() * 4);
 	    }
 
 
@@ -220,7 +221,9 @@ public class OpenGLTest {
 	        gl.glUseProgram(program.name);
 	        gl.glBindVertexArray(vertexArrayName.get(0));
 	        gl.glBindBuffer(GL_ARRAY_BUFFER, bufferName.get(0));
-	        gl.glDrawArrays(GL_TRIANGLES, 0, vertices.length);
+	        int modelMatrixLocation = gl.glGetUniformLocation(program.name, "modelingMatrix");
+	        gl.glUniformMatrix4fv(modelMatrixLocation, 1, false, rotation.glGetMatrixf());
+	        gl.glDrawArrays(GL_TRIANGLES, 0, vertices.length / 4);
 	    }
 
 	    @Override
@@ -261,7 +264,15 @@ public class OpenGLTest {
 	            new Thread(() -> {
 	                window.destroy();
 	            }).start();
-	        }
+	        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+	        	rotation.glRotatef(10.0f, 0.0f, 1.0f, 0.0f);
+	        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+	        	rotation.glRotatef(-10.0f, 0.0f, 1.0f, 0.0f);
+	        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+				rotation.glRotatef(10.0f, 1.0f, 0.0f, 0.0f);
+			} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+				rotation.glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
+			}
 	    }
 
 	    @Override
