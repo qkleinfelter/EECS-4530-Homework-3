@@ -96,18 +96,18 @@ public class OpenGLTest {
 				-0.5f, 0.0f, -0.5f, 1.0f, 0.5f, 0.0f, -0.5f, 1.0f, -0.5f, 0.0f, 0.5f, 1.0f, // base triangle 1
 				0.5f, 0.0f, 0.5f, 1.0f, 0.5f, 0.0f, -0.5f, 1.0f, -0.5f, 0.0f, 0.5f, 1.0f,   // base triangle 2
 				-0.5f, 0.0f, -0.5f, 1.0f, -0.5f, 0.0f, 0.5f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f,  // left side triangle
-				-0.5f, 0.0f, 0.5f, 1.0f, 0.5f, 0.0f, 0.5f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f,    // top side triangle
+				-0.5f, 0.0f, 0.5f, 1.0f, 0.5f, 0.0f, 0.5f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f,    // back side triangle
 				0.5f, 0.0f, 0.5f, 1.0f, 0.5f, 0.0f, -0.5f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f,	// right side triangle
-				-0.5f, 0.0f, -0.5f, 1.0f, 0.5f, 0.0f, -0.5f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f   // bottom side triangle
+				-0.5f, 0.0f, -0.5f, 1.0f, 0.5f, 0.0f, -0.5f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f   // front side triangle
 		};
 
 	    private final float[] colors = {
 				1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,		// base triangle 1
 				0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,		// base triangle 2
 				1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,		// left side triangle
-				1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,		// top side triangle
+				1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,		// back side triangle
 				0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,		// right side triangle
-				1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,		// bottom side triangle
+				1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,		// front side triangle
 		};
 
 
