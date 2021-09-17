@@ -1,32 +1,32 @@
-
-	import com.jogamp.newt.event.*;
-	import com.jogamp.newt.opengl.GLWindow;
-	import com.jogamp.opengl.*;
-	import com.jogamp.opengl.math.FloatUtil;
-	import com.jogamp.opengl.util.Animator;
-	import com.jogamp.opengl.util.GLBuffers;
+import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.newt.event.KeyListener;
+import com.jogamp.newt.event.WindowAdapter;
+import com.jogamp.newt.event.WindowEvent;
+import com.jogamp.newt.opengl.GLWindow;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.GLBuffers;
 import com.jogamp.opengl.util.PMVMatrix;
 import com.jogamp.opengl.util.glsl.ShaderCode;
-	import com.jogamp.opengl.util.glsl.ShaderProgram;
+import com.jogamp.opengl.util.glsl.ShaderProgram;
 
-	import java.nio.ByteBuffer;
-	import java.nio.FloatBuffer;
-	import java.nio.IntBuffer;
-	import java.nio.ShortBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
-	import static com.jogamp.opengl.GL.*;
-	import static com.jogamp.opengl.GL.GL_FLOAT;
-	import static com.jogamp.opengl.GL.GL_TRIANGLES;
-	import static com.jogamp.opengl.GL.GL_UNSIGNED_SHORT;
-	import static com.jogamp.opengl.GL2ES2.GL_DEBUG_SEVERITY_HIGH;
-	import static com.jogamp.opengl.GL2ES2.GL_DEBUG_SEVERITY_MEDIUM;
-	import static com.jogamp.opengl.GL2ES3.*;
-	import static com.jogamp.opengl.GL2ES3.GL_UNIFORM_BUFFER;
-	import static com.jogamp.opengl.GL4.GL_MAP_COHERENT_BIT;
-	import static com.jogamp.opengl.GL4.GL_MAP_PERSISTENT_BIT;
+import static com.jogamp.opengl.GL.*;
+import static com.jogamp.opengl.GL2ES2.GL_DEBUG_SEVERITY_HIGH;
+import static com.jogamp.opengl.GL2ES2.GL_DEBUG_SEVERITY_MEDIUM;
+import static com.jogamp.opengl.GL2ES3.*;
 
 /**
- * 
+ * @author Quinn Kleinfelter
+ *
+ * Changed the vertices and colors arrays to display a pyramid with a 1 unit square base
+ * with top point located at (0, 1, 0).
+ * Also added in code from Dr. Heuring's Add Rotation example to be able to examine
+ * the entire pyramid, as well as added code to accomodate for up and down rotation.
+ * Note: Requires new (add rotation example) shader files to appropriately turn on arrow key
+ * presses (or WASD key presses).
  */
 
 /**
@@ -61,35 +61,6 @@ public class OpenGLTest {
 	    public void main(String[] args) {
 	        new HelloTriangleSimple().setup();
 	    }
-//		private float vertices[] = {
-//				   -0.5f, -0.5f, -0.5f, 1.0f, -0.5f,  0.5f,  0.5f, 1.0f, -0.5f, -0.5f,  0.5f, 1.0f,
-//				   -0.5f, -0.5f, -0.5f, 1.0f, -0.5f,  0.5f,  0.5f, 1.0f, -0.5f,  0.5f, -0.5f, 1.0f,
-//				   -0.5f, -0.5f, -0.5f, 1.0f, -0.5f,  0.5f, -0.5f, 1.0f,  0.5f,  0.5f, -0.5f, 1.0f,
-//				   -0.5f, -0.5f, -0.5f, 1.0f,  0.5f,  0.5f, -0.5f, 1.0f,  0.5f, -0.5f, -0.5f, 1.0f,
-//				   -0.5f, -0.5f, -0.5f, 1.0f,  0.5f, -0.5f, -0.5f, 1.0f,  0.5f, -0.5f,  0.5f, 1.0f,
-//				   -0.5f, -0.5f, -0.5f, 1.0f,  0.5f, -0.5f,  0.5f, 1.0f, -0.5f, -0.5f,  0.5f, 1.0f,
-//				   -0.5f, -0.5f,  0.5f, 1.0f, -0.5f,  0.5f,  0.5f, 1.0f,  0.5f,  0.5f,  0.5f, 1.0f,
-//				   -0.5f, -0.5f,  0.5f, 1.0f,  0.5f,  0.5f,  0.5f, 1.0f,  0.5f, -0.5f,  0.5f, 1.0f,
-//				   -0.5f,  0.5f,  0.5f, 1.0f, -0.5f,  0.5f, -0.5f, 1.0f,  0.5f,  0.5f,  0.5f, 1.0f,
-//					0.5f,  0.5f,  0.5f, 1.0f,  0.5f,  0.5f, -0.5f, 1.0f, -0.5f,  0.5f, -0.5f, 1.0f,
-//					0.5f, -0.5f,  0.5f, 1.0f,  0.5f, -0.5f, -0.5f, 1.0f,  0.5f,  0.5f, -0.5f, 1.0f,
-//					0.5f, -0.5f,  0.5f, 1.0f,  0.5f,  0.5f, -0.5f, 1.0f,  0.5f,  0.5f,  0.5f, 1.0f
-//		};
-//
-//		private float colors[] = {
-//						0.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f, 1.0f,  0.0f, 1.0f, 1.0f, 1.0f,
-//						0.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f, 1.0f,  0.0f, 1.0f, 0.0f, 1.0f,
-//						0.0f, 0.0f, 0.0f, 1.0f,  0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 1.0f, 0.0f, 1.0f,
-//						0.0f, 0.0f, 0.0f, 1.0f,  1.0f, 1.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-//						0.0f, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-//						0.0f, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 1.0f,
-//						0.0f, 0.0f, 1.0f, 1.0f,  0.0f, 1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f, 1.0f,
-//						0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f, 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-//						0.0f, 1.0f, 1.0f, 1.0f,  0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 1.0f, 1.0f, 1.0f,
-//						1.0f, 1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 0.0f, 1.0f,  0.0f, 1.0f, 0.0f, 1.0f,
-//						1.0f, 0.0f, 1.0f, 1.0f,  1.0f, 1.0f, 0.0f, 1.0f,  1.0f, 1.0f, 0.0f, 1.0f,
-//						1.0f, 0.0f, 1.0f, 1.0f,  1.0f, 1.0f, 0.0f, 1.0f,  1.0f, 1.0f, 1.0f, 1.0f
-//		};
 
 		private final float[] vertices = {
 				-0.5f, 0.0f, -0.5f, 1.0f, 0.5f, 0.0f, -0.5f, 1.0f, -0.5f, 0.0f, 0.5f, 1.0f, // base triangle 1
@@ -110,11 +81,10 @@ public class OpenGLTest {
 		};
 
 
-	    private IntBuffer bufferName = GLBuffers.newDirectIntBuffer(Buffer.MAX);
-	    private IntBuffer vertexArrayName = GLBuffers.newDirectIntBuffer(1);
+	    private final IntBuffer bufferName = GLBuffers.newDirectIntBuffer(Buffer.MAX);
+	    private final IntBuffer vertexArrayName = GLBuffers.newDirectIntBuffer(1);
         private Program program;
-	    private long start;
-	    private PMVMatrix rotation = new PMVMatrix();
+		private final PMVMatrix rotation = new PMVMatrix();
 
 	    private void setup() {
 
@@ -156,17 +126,11 @@ public class OpenGLTest {
 	        buildObjects(gl);
 
 	        gl.glEnable(GL_DEPTH_TEST);
-	        start = System.currentTimeMillis();
 	    }
 
 	    private void initDebug(GL4 gl) {
 
-	        window.getContext().addGLDebugListener(new GLDebugListener() {
-	            @Override
-	            public void messageSent(GLDebugMessage event) {
-	                System.out.println(event);
-	            }
-	        });
+	        window.getContext().addGLDebugListener(System.out::println);
 	        /*
 	         * sets up medium and high severity error messages to be printed.
 	         */
@@ -192,16 +156,16 @@ public class OpenGLTest {
 	        gl.glBindVertexArray(vertexArrayName.get(0));
 	        gl.glGenBuffers(Buffer.MAX, bufferName);
 	        gl.glBindBuffer(GL_ARRAY_BUFFER, bufferName.get(0));
-	        gl.glBufferData(GL_ARRAY_BUFFER,  (vertexBuffer.capacity()+colorBuffer.capacity()) * 4 , null, GL_STATIC_DRAW);
-	        gl.glBufferSubData(GL_ARRAY_BUFFER,0L,vertexBuffer.capacity() * 4, vertexBuffer);
-	        gl.glBufferSubData(GL_ARRAY_BUFFER, vertexBuffer.capacity() * 4, colorBuffer.capacity()*4, colorBuffer);
+	        gl.glBufferData(GL_ARRAY_BUFFER,  (vertexBuffer.capacity()+colorBuffer.capacity()) * 4L, null, GL_STATIC_DRAW);
+	        gl.glBufferSubData(GL_ARRAY_BUFFER,0L,vertexBuffer.capacity() * 4L, vertexBuffer);
+	        gl.glBufferSubData(GL_ARRAY_BUFFER, vertexBuffer.capacity() * 4L, colorBuffer.capacity()* 4L, colorBuffer);
 
 	        int vPosition = gl.glGetAttribLocation(program.name, "vPosition");
 	        int vColor = gl.glGetAttribLocation(program.name, "vColor");
 	        gl.glEnableVertexAttribArray(vPosition);
 	        gl.glVertexAttribPointer(vPosition, 4, GL_FLOAT, false, 0, 0);
 	        gl.glEnableVertexAttribArray(vColor);
-	        gl.glVertexAttribPointer(vColor, 4, GL_FLOAT, false, 0, vertexBuffer.capacity() * 4);
+	        gl.glVertexAttribPointer(vColor, 4, GL_FLOAT, false, 0, vertexBuffer.capacity() * 4L);
 	    }
 
 
@@ -264,13 +228,13 @@ public class OpenGLTest {
 	            new Thread(() -> {
 	                window.destroy();
 	            }).start();
-	        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+	        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
 	        	rotation.glRotatef(10.0f, 0.0f, 1.0f, 0.0f);
-	        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+	        } else if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
 	        	rotation.glRotatef(-10.0f, 0.0f, 1.0f, 0.0f);
-	        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+	        } else if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) {
 				rotation.glRotatef(10.0f, 1.0f, 0.0f, 0.0f);
-			} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+			} else if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) {
 				rotation.glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
 			}
 	    }
@@ -324,11 +288,9 @@ public class OpenGLTest {
 	        private int type = 0;
 	        private int id = 0;
 	        private int severity = 0;
-	        private int length = 0;
-	        private String message = null;
-	        private boolean received = false;
+			private String message = null;
 
-	        public GlDebugOutput() {
+			public GlDebugOutput() {
 	        }
 
 	        public GlDebugOutput(int source, int type, int severity) {
@@ -355,7 +317,8 @@ public class OpenGLTest {
 	            else
 	                System.err.println("GlDebugOutput.messageSent(): " + event);
 
-	            if (null != message && message == event.getDbgMsg() && id == event.getDbgId())
+				boolean received = false;
+				if (null != message && message.equals(event.getDbgMsg()) && id == event.getDbgId())
 	                received = true;
 	            else if (0 <= source && source == event.getDbgSource() && type == event.getDbgType() && severity == event.getDbgSeverity())
 	                received = true;
@@ -370,10 +333,7 @@ public class OpenGLTest {
 	public OpenGLTest() {
 		// TODO Auto-generated constructor stub
 	}
-
-	/**
-	 * @param args
-	 */
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		OpenGLTest myInstance = new OpenGLTest();
